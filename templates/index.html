@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Guessing Game</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #4caf50;
+            margin-top: 20px;
+        }
+        p {
+            font-size: 18px;
+            color: #333;
+        }
+        form {
+            margin: 20px auto;
+            max-width: 400px;
+        }
+
+        /* Larger Select Box */
+        select {
+            padding: 15px;
+            font-size: 18px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 250px;
+        }
+
+        /* Larger Buttons */
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #bbb;
+            cursor: not-allowed;
+        }
+
+        /* Letter Buttons */
+        #letters {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin: 20px auto;
+        }
+        .keyboard-row {
+            display: flex;
+            gap: 5px;
+        }
+        #letters button {
+            padding: 15px;
+            font-size: 18px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #ffffff;
+            color: #333;
+            cursor: pointer;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        #letters button:hover {
+            background-color: #4caf50;
+            color: white;
+        }
+        #letters button:disabled {
+            background-color: #bbb;
+            color: #777;
+            border: 1px solid #999;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1>Word Guessing Game</h1>
+
+    {% if not word %}
+    
+    <!-- Difficulty Selection -->
+    <form method="POST">
+        <label for="difficulty">Choose Difficulty:</label>
+        <select name="difficulty" id="difficulty" required>
+            <option value="easy">Easy (5-6 letters)</option>
+            <option value="medium">Medium (7-8 letters)</option>
+            <option value="hard">Hard (9+ letters)</option>
+        </select>
+        <button type="submit" name="start">Start Game</button>
+    </form>
+    
+    {% else %}
+    <!-- Game Interface -->
+    <p>Attempts Left: {{ attempts }}</p>
+    <p>Word: {{ word }}</p>
+    <p>Wrong Letters: {{ wrong_letters }}</p>
+
+    {% if "_" not in word or attempts <= 0 %}
+    <!-- Play Again Button -->
+    <form method="POST">
+        <button type="submit" name="reset">Play Again</button>
+    </form>
+    {% else %}
+    <!-- QWERTY Keyboard Layout -->
+    <div id="letters">
+        <!-- First Row -->
+        <div class="keyboard-row">
+            <button onclick="guessLetter('q')" {% if 'q' in used_letters %}disabled{% endif %}>q</button>
+            <button onclick="guessLetter('w')" {% if 'w' in used_letters %}disabled{% endif %}>w</button>
+            <button onclick="guessLetter('e')" {% if 'e' in used_letters %}disabled{% endif %}>e</button>
+            <button onclick="guessLetter('r')" {% if 'r' in used_letters %}disabled{% endif %}>r</button>
+            <button onclick="guessLetter('t')" {% if 't' in used_letters %}disabled{% endif %}>t</button>
+            <button onclick="guessLetter('y')" {% if 'y' in used_letters %}disabled{% endif %}>y</button>
+            <button onclick="guessLetter('u')" {% if 'u' in used_letters %}disabled{% endif %}>u</button>
+            <button onclick="guessLetter('i')" {% if 'i' in used_letters %}disabled{% endif %}>i</button>
+            <button onclick="guessLetter('o')" {% if 'o' in used_letters %}disabled{% endif %}>o</button>
+            <button onclick="guessLetter('p')" {% if 'p' in used_letters %}disabled{% endif %}>p</button>
+        </div>
+        <!-- Second Row -->
+        <div class="keyboard-row">
+            <button onclick="guessLetter('a')" {% if 'a' in used_letters %}disabled{% endif %}>a</button>
+            <button onclick="guessLetter('s')" {% if 's' in used_letters %}disabled{% endif %}>s</button>
+            <button onclick="guessLetter('d')" {% if 'd' in used_letters %}disabled{% endif %}>d</button>
+            <button onclick="guessLetter('f')" {% if 'f' in used_letters %}disabled{% endif %}>f</button>
+            <button onclick="guessLetter('g')" {% if 'g' in used_letters %}disabled{% endif %}>g</button>
+            <button onclick="guessLetter('h')" {% if 'h' in used_letters %}disabled{% endif %}>h</button>
+            <button onclick="guessLetter('j')" {% if 'j' in used_letters %}disabled{% endif %}>j</button>
+            <button onclick="guessLetter('k')" {% if 'k' in used_letters %}disabled{% endif %}>k</button>
+            <button onclick="guessLetter('l')" {% if 'l' in used_letters %}disabled{% endif %}>l</button>
+        </div>
+        <!-- Third Row -->
+        <div class="keyboard-row">
+            <button onclick="guessLetter('z')" {% if 'z' in used_letters %}disabled{% endif %}>z</button>
+            <button onclick="guessLetter('x')" {% if 'x' in used_letters %}disabled{% endif %}>x</button>
+            <button onclick="guessLetter('c')" {% if 'c' in used_letters %}disabled{% endif %}>c</button>
+            <button onclick="guessLetter('v')" {% if 'v' in used_letters %}disabled{% endif %}>v</button>
+            <button onclick="guessLetter('b')" {% if 'b' in used_letters %}disabled{% endif %}>b</button>
+            <button onclick="guessLetter('n')" {% if 'n' in used_letters %}disabled{% endif %}>n</button>
+            <button onclick="guessLetter('m')" {% if 'm' in used_letters %}disabled{% endif %}>m</button>
+        </div>
+    </div>
+
+    <!-- Hidden Form for Submitting Guesses -->
+    <form method="POST" id="hidden-form">
+        <input type="hidden" name="letter" id="hidden-input">
+    </form>
+
+    <!-- Hint Button -->
+    <form method="POST">
+        <button type="submit" name="hint" {% if attempts <= 1 %}disabled{% endif %}>Get a Hint</button>
+    </form>
+    {% if attempts <= 1 %}
+    <p>You cannot use hints with only one attempt left!</p>
+    {% endif %}
+
+    
+    {% endif %}
+
+    <p>{{ message }}</p>
+    {% endif %}
+
+    <!-- Sound Effects -->
+    <audio id="correct-sound" src="/static/correct.mp3"></audio>
+    <audio id="wrong-sound" src="/static/wrong.mp3"></audio>
+    <audio id="final-correct-sound" src="/static/final-correct.mp3"></audio>
+    <audio id="final-wrong-sound" src="/static/final-wrong.mp3"></audio>
+
+    <!-- JavaScript to Handle Sounds and Input -->
+    <script>
+        // Play sounds based on the message
+        const message = "{{ message }}";
+        if (message.includes("Correct")) {
+            document.getElementById("correct-sound").play();
+        } else if (message.includes("not in the word")) {
+            document.getElementById("wrong-sound").play();
+        } else if (message.includes("Congratulations")) {
+            document.getElementById("final-correct-sound").play();
+        } else if (message.includes("Game Over")) {
+            document.getElementById("final-wrong-sound").play();
+        }
+
+        // Function to submit a letter guess
+        function guessLetter(letter) {
+            document.getElementById("hidden-input").value = letter;
+            document.getElementById("hidden-form").submit();
+        }
+
+        // Listen for keyboard input
+        document.addEventListener("keydown", (event) => {
+            const letter = event.key.toLowerCase();
+            if (letter >= "a" && letter <= "z") {
+                const button = document.querySelector(`#letters button[onclick="guessLetter('${letter}')"]`);
+                if (button && !button.disabled) {
+                    guessLetter(letter);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
